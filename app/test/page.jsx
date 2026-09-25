@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function TestEntry() {
   const router = useRouter();
@@ -39,7 +40,20 @@ export default function TestEntry() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+    <>
+   
+    <div className="min-h-screen flex flex-col items-center justify-between bg-gray-50 pb-36">
+       <div className="w-32 h-24 flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/images/fn_logo.png"
+                  alt="Company Logo"
+                  width={106}
+                  height={106}
+                  priority
+                  className="object-contain"
+                  sizes="96px"
+                />
+              </div>
       <form onSubmit={handleStart} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-2 text-center text-gray-900">
           Candidate Aptitude Test
@@ -60,7 +74,7 @@ export default function TestEntry() {
           required
           value={form.firstName}
           onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-          className="w-full border border-gray-300 p-2 mb-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-purple-300 p-2 mb-3 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
 
         <input
@@ -69,26 +83,27 @@ export default function TestEntry() {
           required
           value={form.lastName}
           onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-          className="w-full border border-gray-300 p-2 mb-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-purple-300 p-2 mb-3 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
 
-        <label className="block text-xs text-gray-500 mb-1">Date of Birth</label>
+        <label className="block text-xs text-purple-500 mb-1">Date of Birth</label>
         <input
           type="date"
           required
           value={form.dob}
           onChange={(e) => setForm({ ...form, dob: e.target.value })}
-          className="w-full border border-gray-300 p-2 mb-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-purple-300 p-2 mb-6 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 font-medium"
+          className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 disabled:opacity-50 font-medium"
         >
           {loading ? 'Preparing Test...' : 'Start Test'}
         </button>
       </form>
     </div>
+    </>
   );
 }

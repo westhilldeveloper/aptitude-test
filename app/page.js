@@ -36,7 +36,7 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-6">
           <Link
             href="/test"
-            className="block p-6 rounded-xl border-2 border-blue-500 hover:bg-blue-50 transition"
+            className="block p-6 rounded-xl border-2 border-purple-600 hover:bg-purple-50 transition"
           >
             <div className="text-3xl mb-2">🧑‍💼</div>
             <h2 className="text-xl font-semibold text-blue-700 mb-1">
