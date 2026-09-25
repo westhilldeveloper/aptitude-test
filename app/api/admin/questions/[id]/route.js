@@ -3,7 +3,7 @@ import sql from '@/lib/db';
 
 export async function PUT(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;          // ✅ await params
     const b = await request.json();
 
     const [row] = await sql`
@@ -22,7 +22,7 @@ export async function PUT(request, { params }) {
     `;
 
     if (!row) {
-      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Question not found' }, { status: 404 });
     }
     return NextResponse.json(row);
   } catch (error) {
@@ -33,9 +33,17 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const { id } = params;
-    await sql`DELETE FROM questions WHERE id = ${id}`;
-    return NextResponse.json({ success: true });
+    const { id } = await params;          // ✅ await params
+
+    const result = await sql`
+      DELETE FROM questions WHERE id = ${id} RETURNING id
+    `;
+
+    if (result.length === 0) {
+      return NextResponse.json({ error: 'Question not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, deletedId: result[0].id });
   } catch (error) {
     console.error('DELETE /api/admin/questions/[id] error:', error);
     return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
