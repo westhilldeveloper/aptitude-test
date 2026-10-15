@@ -184,19 +184,26 @@ export default function AdminQuestions() {
        {questions.map((q, index) => (
   <div
     key={q.id}
-    className="bg-white p-4 rounded-lg shadow flex items-start gap-4"
+    className={`bg-white p-4 rounded-lg shadow flex items-start gap-4 ${
+      q.is_active === false ? 'opacity-60' : ''
+    }`}
   >
     <div className="shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-semibold">
       {index + 1}
     </div>
-
     <div className="flex-1">
-      <p className="font-medium text-gray-800">{q.question_text}</p>
+      <p className="font-medium text-gray-800">
+        {q.question_text}
+        {q.is_active === false && (
+          <span className="ml-2 text-xs px-2 py-0.5 bg-gray-200 text-gray-600 rounded-full">
+            HIDDEN
+          </span>
+        )}
+      </p>
       <p className="text-sm text-gray-500 mt-1">
         {q.category} • Correct: {q.correct_option} • {q.time_limit_seconds}s
       </p>
     </div>
-
     <div className="flex gap-3 shrink-0">
       <button
         onClick={() => handleEdit(q)}
@@ -205,11 +212,12 @@ export default function AdminQuestions() {
         Edit
       </button>
       <button
-        onClick={() => handleDelete(q.id)}
-        className="text-red-600 hover:underline text-sm"
-      >
-        Delete
-      </button>
+  onClick={() => handleDelete(q.id)}
+  className="text-red-600 hover:underline text-sm"
+  title={q.is_active === false ? 'Already hidden' : 'Hide from tests'}
+>
+  Delete
+</button>
     </div>
   </div>
 ))}

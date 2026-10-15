@@ -33,17 +33,39 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const { id } = await params;          // ✅ await params
+    const { id } = await params;
 
-    const result = await sql`
-      DELETE FROM questions WHERE id = ${id} RETURNING id
+    // Check if this question has been answered by anyone
+    const [{ count }] = await sql`
+      SELECT COUNT(*)::int AS count FROM answers WHERE question_id = ${id}
     `;
 
-    if (result.length === 0) {
-      return NextResponse.json({ error: 'Question not found' }, { status: 404 });
+    if (count > 0) {
+      // Soft delete — keep the row for historical results
+      const [row] = await sql`
+        UPDATE questions
+        SET is_active = FALSE, updated_at = NOW()
+        WHERE id = ${id}
+        RETURNING id
+      `;
+      if (!row) {
+        return NextResponse.json({ error: 'Question not found' }, { status: 404 });
+      }
+      return NextResponse.json({
+        success: true,
+        mode: 'soft',
+        message: `Question hidden. ${count} existing answer(s) preserved.`,
+      });
     }
 
-    return NextResponse.json({ success: true, deletedId: result[0].id });
+    // No one has answered it yet — safe to hard delete
+    const [row] = await sql`
+      DELETE FROM questions WHERE id = ${id} RETURNING id
+    `;
+    if (!row) {
+      return NextResponse.json({ error: 'Question not found' }, { status: 404 });
+    }
+    return NextResponse.json({ success: true, mode: 'hard' });
   } catch (error) {
     console.error('DELETE /api/admin/questions/[id] error:', error);
     return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
